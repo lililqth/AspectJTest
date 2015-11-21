@@ -1,0 +1,59 @@
+package com.aspectj.run;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import com.aspectj.coding.addcode;
+import com.aspectj.demo.Editor;
+
+public class Run {
+	public static void runAnalysis(String filepath, String filename,
+			String ajFileName) {
+
+//		System.setProperty("user.dir", filepath);
+//		System.out.println("current path:"+filepath);
+		String command = null;
+		if(addcode.getcount() > 0){
+		command = "cmd.exe /c ajc -d bin " + Editor.getpackagename();
+		for (int i = 0; i < addcode.getcount(); i++)
+			command += " " + filepath + "/addaj/add"+i+".aj ";
+		command += "-cp " +"C:/aspectj1.7/lib/aspectjrt.jar -1.7";
+		}
+		else {
+			command = "cmd.exe /c ajc -d bin " + Editor.getpackagename();
+			command += " -cp " +"C:/aspectj1.7/lib/aspectjrt.jar -1.7";
+		}
+		try {
+			Process pcProcess = Runtime.getRuntime().exec(command, null, new File(filepath));
+			pcProcess.waitFor();
+			System.out.println(command);
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+//		System.setProperty("user.dir", filepath+"\\temp");
+//		System.out.println("user: "+System.getProperty("user.dir"));
+		command = "cmd.exe /c java -cp bin;C:/aspectj1.7/lib/aspectjrt.jar " 
+				+ Editor.getmainjava().substring(0, Editor.getmainjava().indexOf(".java"));
+		//+ filename.substring(0, filename.indexOf(".java"));
+		try {
+			Process p = Runtime.getRuntime().exec(command, null, new File(filepath));
+			p.waitFor();
+			InputStream is = p.getInputStream();
+			BufferedReader in = new BufferedReader(new InputStreamReader(is));
+			String line = null;
+			while ((line = in.readLine()) != null) {
+				System.out.println(line);
+				}
+
+			System.out.println(command);
+			//System.out.println("run: "+b);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+}

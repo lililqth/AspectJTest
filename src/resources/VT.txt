@@ -1,0 +1,138 @@
+package com.aspectj.demo.aspect;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+public aspect aspectjanalysictempfile { 
+	String filename = "ValueTracker.xml";
+	
+	pointcut HelloWorldPointCut() : execution(* *(..));
+	pointcut PublicValueChangePointCut(int v) : set(public * *.*)&& args(v);
+	pointcut PrivateValueChangePointCut(int v) : set(private * *.*)&& args(v);
+	pointcut ProtectedValueChangePointCut(int v) : set(protected * *.*)&& args(v);
+	//pointcut ValueChangePointCut(int a) : set(private int m) && args(a);  
+	
+    
+	before() : HelloWorldPointCut(){
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(filename, true);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String startString = "<functionstart>" + thisJoinPoint.getSignature().toLongString() +"</functionstart>\n";
+		try {
+			fw.write(startString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	after() : HelloWorldPointCut(){
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(filename, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String endString = "<functionend>" + thisJoinPoint.getSignature().toLongString() +"</functionend>\n";
+		try {
+			fw.write(endString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	before(int v) : PublicValueChangePointCut (v) {
+		System.out.println("in the ValueChangePointCut   a = "+v);  
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(filename, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||" 
+								+ v + "</value>\n";
+		System.out.println(thisJoinPoint.getThis());
+		try {
+			fw.write(endString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	before(int v) : PrivateValueChangePointCut (v) {
+		System.out.println("in the ValueChangePointCut   a = "+v);  
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(filename, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||" 
+								+ v + "</value>\n";
+		System.out.println(thisJoinPoint.getThis());
+		try {
+			fw.write(endString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	before(int v) : ProtectedValueChangePointCut (v) {
+		System.out.println("in the ValueChangePointCut   a = "+v);  
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(filename, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||" 
+								+ v + "</value>\n";
+		System.out.println(thisJoinPoint.getThis());
+		try {
+			fw.write(endString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}
