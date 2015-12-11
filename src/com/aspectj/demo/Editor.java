@@ -271,7 +271,7 @@ public class Editor {
 			setRootDir(new File(selecteddir));
 			System.out.println("您选中的文件夹目录为：" + selecteddir);
 			ArrayList<String> temp = findpackage.getPackageStrings(selecteddir);
-			
+
 			packagename = parentpath + "/*.java ";
 
 			for (int i = 0; i < temp.size(); i++) {
@@ -340,7 +340,7 @@ public class Editor {
 				setRootDir(new File(parentpath));
 
 				/*************** 读取xml信息 ***************************************/
-				/*对XML文件进行结尾*/
+				/* 对XML文件进行结尾 */
 				String pathname = parentpath + "/analysisResult.xml";
 				try {
 					Thread.sleep(2500);
@@ -356,9 +356,9 @@ public class Editor {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				/*对XML文件进行结尾*/
-				/*注释，修改*/
-				/*从XML文件中读取函数信息*/
+				/* 对XML文件进行结尾 */
+				/* 注释，修改 */
+				/* 从XML文件中读取函数信息 */
 				try {
 					HashMap<String, Integer> tmpHashMap = AnalysisTool.getFunctionMapFromXml(pathname);
 					list = new String[tmpHashMap.keySet().size()];
@@ -373,7 +373,7 @@ public class Editor {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
-				/*注释，修改*/
+				/* 注释，修改 */
 				list = new String[100000];
 				functiontime = new int[100000];
 				// System.out.println(pathname);
@@ -383,13 +383,13 @@ public class Editor {
 					org.w3c.dom.Document doc = db.parse(pathname);
 
 					NodeList startList = doc.getElementsByTagName("start");
-					System.out.println("共有" + startList.getLength() + "个start节点");
+//					System.out.println("共有" + startList.getLength() + "个start节点");
 
 					int j = 0, k = 0;
 					for (int i = 0; i < startList.getLength(); i++) {
 						Node start = startList.item(i);
 						String name = start.getTextContent();
-						System.out.println(name);
+//						System.out.println(name);
 						for (j = 0; j < k; j++) {
 							if (name.equals(list[j]) == true) {
 								functiontime[j]++;
@@ -655,24 +655,24 @@ public class Editor {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem item = (TreeItem) e.item;
 				File file = (File) item.getData();
-//				if (javaname == null) {
-					javaname = file.getAbsolutePath();
-					mainjava = file.getName();
-					System.out.println(file.getName());
-//				}
-				
+				// if (javaname == null) {
+				javaname = file.getAbsolutePath();
+				mainjava = file.getName();
+				System.out.println(file.getName());
+				// }
+
 				addTab(file, getFileContent(file));
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				TreeItem item = (TreeItem) e.item;
 				File file = (File) item.getData();
-//				if (javaname == null) {
-					javaname = file.getAbsolutePath();
-					mainjava = file.getName();
-					System.out.println(file.getName());
-//				}
-				
+				// if (javaname == null) {
+				javaname = file.getAbsolutePath();
+				mainjava = file.getName();
+				System.out.println(file.getName());
+				// }
+
 				addTab(file, getFileContent(file));
 				// if (Program.launch(file.getAbsolutePath())) {
 				// System.out.println("File has been launched: " + file);
@@ -782,12 +782,21 @@ public class Editor {
 
 		// 快速插入下拉框
 		final Combo insertCombo = new Combo(insertGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
-		insertCombo.add("System.out.println(\"hello\");");
+		insertCombo.add("Hello World!");
+		insertCombo.add("输出方法签名");
+		insertCombo.add("输出函数文件名和行号");
+		insertCombo.add("输出切点类型");
+		insertCombo.add("输出切点类型(详细)");
+		insertCombo.setData("0", "System.out.println(\"hello\");");
+		insertCombo.setData("1", "System.out.println(thisJoinPoint.getSignature().toLongString());");
+		insertCombo.setData("2", "System.out.println(thisJoinPoint.getSourceLocation());");
+		insertCombo.setData("3", "System.out.println(thisJoinPoint.getKind());");
+		insertCombo.setData("4", "System.out.println(thisJoinPoint.getStaticPart());");
 		// insertCombo.add("System.out.println("")");
 		// insertCombo.add("after( Formals ) throwing [ ( Formal ) ]");
 		// insertCombo.add("after( Formals )");
 		// insertCombo.add("Type around( Formals )");
-		insertCombo.setText("System.out.println(\"hello\");");
+		insertCombo.setText("Hello World!");
 		final FormData insertComboFormData = new FormData();
 		insertComboFormData.top = new FormAttachment(35, 0);
 		insertComboFormData.left = new FormAttachment(5, 0);
@@ -796,7 +805,9 @@ public class Editor {
 		insertCombo.setLayoutData(insertComboFormData);
 		insertCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { // 按钮的单击事件
-				insertText.setText(insertCombo.getText());
+				String key = "" + insertCombo.getSelectionIndex();
+				insertText.setText("System.out.println(\"***************插入点开始*****************\");\n"
+						+ insertCombo.getData(key) + "\nSystem.out.println(\"***************插入点结束*****************\");");
 			}
 		});
 
@@ -886,9 +897,8 @@ public class Editor {
 				try {
 					variateTable.removeAll();
 					AnalysisTool.analysisVar(javaname);
-					
-					
-					/*对XML文件进行结尾*/
+
+					/* 对XML文件进行结尾 */
 					String pathname = parentpath + "/ValueTracker.xml";
 					try {
 						Thread.sleep(2500);
@@ -904,8 +914,8 @@ public class Editor {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					/*对XML文件进行结尾*/
-					
+					/* 对XML文件进行结尾 */
+
 					ValueTracker.analysis(parentpath + "/ValueTracker.xml");
 					String nameOfVariate = variateText.getText();
 					variatelog = ValueTracker.getValueList(nameOfVariate);
@@ -997,7 +1007,7 @@ public class Editor {
 				}
 			}
 		});
-		
+
 		Button undoButton = new Button(insertGroup, SWT.NONE);
 		undoButton.setText("撤销");
 		final FormData undoFormData = new FormData();
@@ -1009,25 +1019,21 @@ public class Editor {
 		undoButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Undo undo = new Undo();
-				Invoker invoker = new Invoker();  
-		        invoker.setCommand(undo);  
-		        invoker.action(); 
-				/*int num = addcode.getcount();
-				if (num >= 1) {
-					num--;
-					addcode.setCount(num);
-					// delete("add"+num+".aj");
-					// delete("add"+num+".class");
-					MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
-					messageBox.setMessage("撤销完成！");
-					messageBox.open();
-					setRootDir(new File(parentpath));
-				} else {
-					MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
-					messageBox.setMessage("您还未执行任何操作！");
-					messageBox.open();
-				}*/
-				
+				Invoker invoker = new Invoker();
+				invoker.setCommand(undo);
+				invoker.action();
+				/*
+				 * int num = addcode.getcount(); if (num >= 1) { num--;
+				 * addcode.setCount(num); // delete("add"+num+".aj"); //
+				 * delete("add"+num+".class"); MessageBox messageBox = new
+				 * MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+				 * messageBox.setMessage("撤销完成！"); messageBox.open();
+				 * setRootDir(new File(parentpath)); } else { MessageBox
+				 * messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL |
+				 * SWT.ICON_WARNING); messageBox.setMessage("您还未执行任何操作！");
+				 * messageBox.open(); }
+				 */
+
 			}
 		});
 
@@ -1041,27 +1047,21 @@ public class Editor {
 		redoButton.setLayoutData(redoFormData);
 		redoButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Redo redo  = new Redo();
+				Redo redo = new Redo();
 				Invoker invoker = new Invoker();
 				invoker.setCommand(redo);
 				invoker.action();
-				/*int num = addcode.getcount();
-				if (num > -1) {
-					num++;
-					addcode.setCount(num);
-					// for(int i = 0; i < num; i++){
-					// delete("add"+i+".aj"); //清除操作
-					// delete("add"+i+".class"); //清除操作
-					// }
-					setRootDir(new File(parentpath));
-					MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
-					messageBox.setMessage("重做完成！");
-					messageBox.open();
-				} else {
-					MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
-					messageBox.setMessage("您还未执行任何撤销操作！");
-					messageBox.open();
-				}*/
+				/*
+				 * int num = addcode.getcount(); if (num > -1) { num++;
+				 * addcode.setCount(num); // for(int i = 0; i < num; i++){ //
+				 * delete("add"+i+".aj"); //清除操作 // delete("add"+i+".class");
+				 * //清除操作 // } setRootDir(new File(parentpath)); MessageBox
+				 * messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL |
+				 * SWT.ICON_WARNING); messageBox.setMessage("重做完成！");
+				 * messageBox.open(); } else { MessageBox messageBox = new
+				 * MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+				 * messageBox.setMessage("您还未执行任何撤销操作！"); messageBox.open(); }
+				 */
 			}
 		});
 
@@ -1141,20 +1141,23 @@ public class Editor {
 
 }
 
-class Invoker {  
-    private Command command;  
-    public void setCommand(Command command) {  
-        this.command = command;  
-    }  
-    public void action(){
-        this.command.execute();  
-    }  
-}  
+class Invoker {
+	private Command command;
 
-abstract class Command {  
-    public abstract void execute();  
-}  
-class Redo extends Command{
+	public void setCommand(Command command) {
+		this.command = command;
+	}
+
+	public void action() {
+		this.command.execute();
+	}
+}
+
+abstract class Command {
+	public abstract void execute();
+}
+
+class Redo extends Command {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
@@ -1175,12 +1178,13 @@ class Redo extends Command{
 			messageBox.open();
 		}
 	}
-	
+
 }
-class Undo extends Command {  
-    public void execute() {  
-    	int num = addcode.getcount();
-    	int undoCount = addcode.getUndoCount();
+
+class Undo extends Command {
+	public void execute() {
+		int num = addcode.getcount();
+		int undoCount = addcode.getUndoCount();
 		if (num >= 1) {
 			undoCount++;
 			num--;
@@ -1195,5 +1199,5 @@ class Undo extends Command {
 			messageBox.setMessage("您还未执行任何操作！");
 			messageBox.open();
 		}
-    }  
-}  
+	}
+}

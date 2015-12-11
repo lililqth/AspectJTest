@@ -245,19 +245,19 @@ public class DrawTree {
 	void traverse(xmlResultTreeNode head, TreeItem item) {
 		item.setText(head.getName());
 		int childNum = head.getNumOfChild();
-		System.out.println(head.getName());
-		System.out.println("当前节点有孩子：" + childNum + "个");
+//		System.out.println(head.getName());
+//		System.out.println("当前节点有孩子：" + childNum + "个");
 		if (childNum == 0) {
 			return;
 		}
 		for (int i = 0; i < childNum; i++) {
 			xmlResultTreeNode node = head.getChild(i);
-			System.out.println(i + " =====> " + node.getName());
+//			System.out.println(i + " =====> " + node.getName());
 			TreeItem subItem = new TreeItem(item, SWT.CHECK);
 			subItem.setExpanded(true);
 			traverse(node, subItem);
 		}
-		System.out.println();
+//		System.out.println();
 	}
 
 	class MakeFilt extends SelectionAdapter {

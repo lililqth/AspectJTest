@@ -30,7 +30,7 @@ public class Proba
       gv.addln("getX -> getalue;");
       
       gv.addln(gv.end_graph());
-      System.out.println(gv.getDotSource());
+//      System.out.println(gv.getDotSource());
       String type = "gif";
 //      String type = "dot";
 //      String type = "fig";    // open with xfig

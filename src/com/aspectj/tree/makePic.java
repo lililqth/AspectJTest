@@ -89,7 +89,7 @@ public class makePic {
 		gv.addln("bgcolor = \"#F0F0F0\";");
 		traverse(drawTree.root);
 		gv.addln(gv.end_graph());
-		System.out.println(gv.getDotSource());
+//		System.out.println(gv.getDotSource());
 		// String type = "gif";
 		// String type = "dot";
 		// String type = "fig"; // open with xfig
