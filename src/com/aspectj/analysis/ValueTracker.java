@@ -57,11 +57,15 @@ public class ValueTracker{
 						tmpArrayList.add(new ValueChangePoint(functionStack.peek(), OldValue, value));
 					} else {
 						ArrayList<ValueChangePoint> tmpArrayList = new ArrayList<ValueChangePoint>();
-						tmpArrayList.add(new ValueChangePoint(functionStack.peek(), null, value));
+						if(!functionStack.isEmpty()){
+							tmpArrayList.add(new ValueChangePoint(functionStack.peek(), null, value));
+						}else{
+							tmpArrayList.add(new ValueChangePoint("œ‘ Ω≥ı ºªØ", null, value));
+						}
+						
 						result.put(valueName, tmpArrayList);
 					}
 				}
-				
 				tmpString = br.readLine();
 			}
 			

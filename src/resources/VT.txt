@@ -2,17 +2,18 @@ package com.aspectj.demo.aspect;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
-public aspect aspectjanalysictempfile { 
+public aspect aspectjanalysictempfile {
 	String filename = "ValueTracker.xml";
-	
+
 	pointcut HelloWorldPointCut() : execution(* *(..));
-	pointcut PublicValueChangePointCut(int v) : set(public * *.*)&& args(v);
-	pointcut PrivateValueChangePointCut(int v) : set(private * *.*)&& args(v);
-	pointcut ProtectedValueChangePointCut(int v) : set(protected * *.*)&& args(v);
-	//pointcut ValueChangePointCut(int a) : set(private int m) && args(a);  
-	
-    
+	pointcut PublicValueChangePointCut() : set(public * *.*);
+	pointcut PrivateValueChangePointCut() : set(private * *.*);
+	pointcut ProtectedValueChangePointCut() : set(protected * *.*);
+	//pointcut ValueChangePointCut(int a) : set(private int m) && args(a);
+
+
 	before() : HelloWorldPointCut(){
 		FileWriter fw = null;
 		try {
@@ -35,7 +36,7 @@ public aspect aspectjanalysictempfile {
 			e.printStackTrace();
 		}
 	}
-	
+
 	after() : HelloWorldPointCut(){
 		FileWriter fw = null;
 		try {
@@ -58,9 +59,14 @@ public aspect aspectjanalysictempfile {
 			e.printStackTrace();
 		}
 	}
-	
-	before(int v) : PublicValueChangePointCut (v) {
-		System.out.println("in the ValueChangePointCut   a = "+v);  
+
+	before() : PublicValueChangePointCut () {
+		Object[] object = thisJoinPoint.getArgs();
+		String type = choosType(object[0]);
+
+
+
+		System.out.println("in the ValueChangePointCut   a = "+type);
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(filename, true);
@@ -68,9 +74,8 @@ public aspect aspectjanalysictempfile {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||" 
-								+ v + "</value>\n";
-		System.out.println(thisJoinPoint.getThis());
+		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||"
+								+ type + "</value>\n";
 		try {
 			fw.write(endString);
 		} catch (IOException e) {
@@ -84,8 +89,12 @@ public aspect aspectjanalysictempfile {
 			e.printStackTrace();
 		}
 	}
-	before(int v) : PrivateValueChangePointCut (v) {
-		System.out.println("in the ValueChangePointCut   a = "+v);  
+	before() : PrivateValueChangePointCut () {
+		Object[] object = thisJoinPoint.getArgs();
+		String type = choosType(object[0]);
+
+
+		System.out.println("in the ValueChangePointCut   a = "+type);
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(filename, true);
@@ -93,9 +102,8 @@ public aspect aspectjanalysictempfile {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||" 
-								+ v + "</value>\n";
-		System.out.println(thisJoinPoint.getThis());
+		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||"
+								+ type + "</value>\n";
 		try {
 			fw.write(endString);
 		} catch (IOException e) {
@@ -109,8 +117,11 @@ public aspect aspectjanalysictempfile {
 			e.printStackTrace();
 		}
 	}
-	before(int v) : ProtectedValueChangePointCut (v) {
-		System.out.println("in the ValueChangePointCut   a = "+v);  
+	before() : ProtectedValueChangePointCut () {
+		Object[] object = thisJoinPoint.getArgs();
+		String type = choosType(object[0]);
+
+		System.out.println("in the ValueChangePointCut   a = "+type);
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(filename, true);
@@ -118,9 +129,8 @@ public aspect aspectjanalysictempfile {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||" 
-								+ v + "</value>\n";
-		System.out.println(thisJoinPoint.getThis());
+		String endString = "<value>" + thisJoinPoint.getSignature().toLongString() + "||"
+								+ type + "</value>\n";
 		try {
 			fw.write(endString);
 		} catch (IOException e) {
@@ -133,6 +143,102 @@ public aspect aspectjanalysictempfile {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static String choosType(Object object){
+		String type = "";
+		if (object == null)
+			type= "<null>";
+		else if (object instanceof String) {
+			if(((String) object).length() > 100)
+				type= ((String) object).substring(0, 100) + "...[more]";
+			else type=  (String) object;
+		}
+		else if (object instanceof Long)
+			type=  ((Long) object).toString();
+		else if (object instanceof Short)
+			type=  ((Short) object).toString();
+		else if (object instanceof Boolean)
+			type=  ((Boolean) object).toString();
+		else if (object instanceof Double)
+			type=  ((Double) object).toString();
+		else if (object instanceof Integer)
+			type=  ((Integer) object).toString();
+		else if (object instanceof Float)
+			type=  ((Float) object).toString();
+		else if (object instanceof Character)
+			type=  ((Character) object).toString();
+		else if (object instanceof Byte)
+			type=  ((Byte) object).toString();
+		else if (object instanceof Long[]){
+			type=  "Long Array[" ;
+			for(int i=0;i<((Long[]) object).length;i++){
+				type +=" "+  ((Long[]) object)[i];
+			}
+			type += "]";
+		}
+		else if (object instanceof Short[]){
+			type=  "Short Array[" ;
+			for(int i=0;i<((Short[]) object).length;i++){
+				type += " "+ ((Short[]) object)[i];
+			}
+			type += "]";
+		}
+		else if (object instanceof Boolean[]){
+			type=  "Boolean Array[" ;
+			for(int i=0;i<((Boolean[]) object).length;i++){
+				type += " "+ ((Boolean[]) object)[i];
+			}
+			type += "]";
+		}
+		else if (object instanceof Double[]){
+			type=  "Double Array[" ;
+			for(int i=0;i<((Double[]) object).length;i++){
+				type += " "+ ((Double[]) object)[i];
+			}
+			type += "]";
+		}
+		else if (object instanceof Float[]){
+			type=  "Float Array[" ;
+			for(int i=0;i<((Float[]) object).length;i++){
+				type +=" "+  ((Float[]) object)[i];
+			}
+			type += "]";
+		}
+		else if (object instanceof Character[]){
+			type=  "Character Array[" ;
+			for(int i=0;i<((Character[]) object).length;i++){
+				type += " "+ ((Character[]) object)[i];
+			}
+			type += "]";
+		}
+		else if (object instanceof Byte[]){
+			type=  "Byte Array[" ;
+			for(int i=0;i<((Byte[]) object).length;i++){
+				type += " "+ ((Byte[]) object)[i];
+			}
+			type += "]";
+		}
+		else if (object instanceof String[]){
+			type=  "String Array[" ;
+			for(int i=0;i<((String[]) object).length;i++){
+				type +=" "+ ((String[]) object)[i];
+
+
+			}
+			type += "]";
+		}
+		else if (object instanceof List){
+			type=  "items{" ;
+			for(int i=0;i<((List) object).size();i++){
+				type +=" "+  ((List) object).get(i);
+			}
+			type += "}";
+		}
+		else{
+			type=  "object";
+		}
+		return type;
 	}
 
 }

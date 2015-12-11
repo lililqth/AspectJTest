@@ -12,8 +12,10 @@ import org.eclipse.swt.widgets.MessageBox;
 
 import com.aspectj.demo.Editor;
 
+
 public class addcode {
 	private static int count = 0;
+	private static int undoCount = 0;
 	public static int getcount(){
 		return count;
 	}
@@ -50,5 +52,11 @@ public class addcode {
 				    SWT.ICON_WARNING); 
 				 messageBox.setMessage("aj文件生成成功"); 
 				 messageBox.open(); 
+	}
+	public static int getUndoCount() {
+		return undoCount;
+	}
+	public static void setUndoCount(int undoCount) {
+		addcode.undoCount = undoCount;
 	}
 }

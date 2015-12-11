@@ -31,7 +31,7 @@ import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import com.aspectj.demo.Editor;
 
 public class DrawTree {
-	private static DrawTree drawTree;
+	private static boolean isGenerated = false;
 	private Display display = Editor.display;
 	Shell shell = new Shell(display,
 			SWT.DIALOG_TRIM /*
@@ -78,8 +78,14 @@ public class DrawTree {
 	}
 
 	public static DrawTree getInstance(xmlResultTreeNode rootNode) {
-		drawTree = new DrawTree(rootNode);
-		return drawTree;
+		if (DrawTree.isGenerated == false){
+				DrawTree drawTree = new DrawTree(rootNode);
+				DrawTree.isGenerated = false;
+			return drawTree;
+		}else{
+			return null;
+		}
+		
 	}
 
 	public void createCompositeImage() {
@@ -136,7 +142,7 @@ public class DrawTree {
 	}
 
 	private DrawTree(xmlResultTreeNode rootNode) {
-
+		DrawTree.isGenerated = true;
 		head = rootNode;
 		viewer.expandAll();
 		shell.setText("函数调用关系 ");
@@ -197,7 +203,8 @@ public class DrawTree {
 		// 窗口关闭的响应事件 调试
 		shell.addShellListener(new ShellAdapter() {
 			public void shellClosed(ShellEvent arg0) {
-				// System.out.println("closed");
+//				 System.out.println("closed");
+//				DrawTree.isGenerated = false;
 				// arg0.doit = false;
 				// shell.setVisible(false);
 

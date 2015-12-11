@@ -547,7 +547,7 @@ public class Editor {
 		}
 	}
 
-	private static void setRootDir(File root) {
+	public static void setRootDir(File root) {
 		if ((!root.isDirectory()) || (!root.exists()))
 			throw new IllegalArgumentException("Invalid root: " + root);
 		rootDir = root;
@@ -653,17 +653,25 @@ public class Editor {
 		});
 		tree.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-
+				TreeItem item = (TreeItem) e.item;
+				File file = (File) item.getData();
+//				if (javaname == null) {
+					javaname = file.getAbsolutePath();
+					mainjava = file.getName();
+					System.out.println(file.getName());
+//				}
+				
+				addTab(file, getFileContent(file));
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				TreeItem item = (TreeItem) e.item;
 				File file = (File) item.getData();
-				if (javaname == null) {
+//				if (javaname == null) {
 					javaname = file.getAbsolutePath();
 					mainjava = file.getName();
 					System.out.println(file.getName());
-				}
+//				}
 				
 				addTab(file, getFileContent(file));
 				// if (Program.launch(file.getAbsolutePath())) {
@@ -878,6 +886,26 @@ public class Editor {
 				try {
 					variateTable.removeAll();
 					AnalysisTool.analysisVar(javaname);
+					
+					
+					/*对XML文件进行结尾*/
+					String pathname = parentpath + "/ValueTracker.xml";
+					try {
+						Thread.sleep(2500);
+					} catch (InterruptedException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+					try {
+						FileWriter fw = new FileWriter(pathname, true);
+						fw.write("</functions>");
+						fw.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					/*对XML文件进行结尾*/
+					
 					ValueTracker.analysis(parentpath + "/ValueTracker.xml");
 					String nameOfVariate = variateText.getText();
 					variatelog = ValueTracker.getValueList(nameOfVariate);
@@ -980,7 +1008,11 @@ public class Editor {
 		undoButton.setLayoutData(undoFormData);
 		undoButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				int num = addcode.getcount();
+				Undo undo = new Undo();
+				Invoker invoker = new Invoker();  
+		        invoker.setCommand(undo);  
+		        invoker.action(); 
+				/*int num = addcode.getcount();
 				if (num >= 1) {
 					num--;
 					addcode.setCount(num);
@@ -994,8 +1026,8 @@ public class Editor {
 					MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
 					messageBox.setMessage("您还未执行任何操作！");
 					messageBox.open();
-				}
-
+				}*/
+				
 			}
 		});
 
@@ -1009,7 +1041,11 @@ public class Editor {
 		redoButton.setLayoutData(redoFormData);
 		redoButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				int num = addcode.getcount();
+				Redo redo  = new Redo();
+				Invoker invoker = new Invoker();
+				invoker.setCommand(redo);
+				invoker.action();
+				/*int num = addcode.getcount();
 				if (num > -1) {
 					num++;
 					addcode.setCount(num);
@@ -1025,7 +1061,7 @@ public class Editor {
 					MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
 					messageBox.setMessage("您还未执行任何撤销操作！");
 					messageBox.open();
-				}
+				}*/
 			}
 		});
 
@@ -1048,7 +1084,7 @@ public class Editor {
 			initDir = args[0];
 			MyArgs = args;
 		} else {
-			initDir = "C:/Home";
+			initDir = "C:/Closest_Point_Pair/src/Cloest_Point_Pair";
 		}
 		display = Display.getDefault();
 		font = Display.getDefault().getSystemFont();
@@ -1104,3 +1140,60 @@ public class Editor {
 	}
 
 }
+
+class Invoker {  
+    private Command command;  
+    public void setCommand(Command command) {  
+        this.command = command;  
+    }  
+    public void action(){
+        this.command.execute();  
+    }  
+}  
+
+abstract class Command {  
+    public abstract void execute();  
+}  
+class Redo extends Command{
+	@Override
+	public void execute() {
+		// TODO Auto-generated method stub
+		int num = addcode.getcount();
+		int undoCount = addcode.getUndoCount();
+		if (undoCount > 0) {
+			undoCount--;
+			num++;
+			addcode.setCount(num);
+			addcode.setUndoCount(undoCount);
+			Editor.setRootDir(new File(Editor.getparentpath()));
+			MessageBox messageBox = new MessageBox(Editor.shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+			messageBox.setMessage("重做完成！");
+			messageBox.open();
+		} else {
+			MessageBox messageBox = new MessageBox(Editor.shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+			messageBox.setMessage("您已到达最新更改！");
+			messageBox.open();
+		}
+	}
+	
+}
+class Undo extends Command {  
+    public void execute() {  
+    	int num = addcode.getcount();
+    	int undoCount = addcode.getUndoCount();
+		if (num >= 1) {
+			undoCount++;
+			num--;
+			addcode.setCount(num);
+			addcode.setUndoCount(undoCount);
+			MessageBox messageBox = new MessageBox(Editor.shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+			messageBox.setMessage("撤销完成！");
+			messageBox.open();
+			Editor.setRootDir(new File(Editor.getparentpath()));
+		} else {
+			MessageBox messageBox = new MessageBox(Editor.shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+			messageBox.setMessage("您还未执行任何操作！");
+			messageBox.open();
+		}
+    }  
+}  
