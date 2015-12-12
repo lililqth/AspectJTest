@@ -1084,7 +1084,9 @@ public class Editor {
 			initDir = args[0];
 			MyArgs = args;
 		} else {
-			initDir = "C:/Closest_Point_Pair/src/Cloest_Point_Pair";
+//			initDir = "C:/Closest_Point_Pair/src/Cloest_Point_Pair";
+			initDir ="C:/javaProject/Calculator/src";
+			initDir ="C:/Home";
 		}
 		display = Display.getDefault();
 		font = Display.getDefault().getSystemFont();

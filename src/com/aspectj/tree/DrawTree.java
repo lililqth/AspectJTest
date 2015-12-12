@@ -1,5 +1,6 @@
 package com.aspectj.tree;
 
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,14 +79,13 @@ public class DrawTree {
 	}
 
 	public static DrawTree getInstance(xmlResultTreeNode rootNode) {
-		if (DrawTree.isGenerated == false){
-				DrawTree drawTree = new DrawTree(rootNode);
-				DrawTree.isGenerated = false;
+		if (DrawTree.isGenerated == false) {
+			DrawTree drawTree = new DrawTree(rootNode);
+			DrawTree.isGenerated = false;
 			return drawTree;
-		}else{
+		} else {
 			return null;
 		}
-		
 	}
 
 	public void createCompositeImage() {
@@ -158,28 +158,37 @@ public class DrawTree {
 		tree.getParent().layout();
 
 		/* 测试代码 向arraylist中插入数据 */
-//		xmlResultTreeNode node = new xmlResultTreeNode("public static void helloworld.helloworld(java.lang.String[])");
-//		xmlResultTreeNode node1 = new xmlResultTreeNode("public static void helloworld.function(int)");
-//		node.childArrayList.add(node1);
-//		node1 = new xmlResultTreeNode("public static boolean helloworld.setText(java.lang.String)");
-//		node.childArrayList.add(node1);
-//		node1 = new xmlResultTreeNode("private static boolean helloworld.setX(int)");
-//		node.childArrayList.add(node1);
-//		node1 = new xmlResultTreeNode("protected static boolean helloworld.setValue(double)");
-//		node.childArrayList.add(node1);
-//		head.childArrayList.add(node);
-//
-//		node = new xmlResultTreeNode("public static int helloworld.getX(int)");
-//		node1 = new xmlResultTreeNode("public static int helloworld.show()");
-//		node.childArrayList.add(node1);
-//		xmlResultTreeNode node2 = new xmlResultTreeNode("public static int helloworld.getValue(java.lang.String[])");
-//		node1.childArrayList.add(node2);
-//		xmlResultTreeNode node3 = new xmlResultTreeNode("public static string helloworld.getText(java.lang.String[])");
-//		node2.childArrayList.add(node3);
-//		head.childArrayList.add(node);
-//
-//		root.setText("public static string helloworld.main(java.lang.String[])");
-//		root.setImage(new Image(display, "F://javaworkspace//src//2.bmp"));
+		// xmlResultTreeNode node = new xmlResultTreeNode("public static void
+		// helloworld.helloworld(java.lang.String[])");
+		// xmlResultTreeNode node1 = new xmlResultTreeNode("public static void
+		// helloworld.function(int)");
+		// node.childArrayList.add(node1);
+		// node1 = new xmlResultTreeNode("public static boolean
+		// helloworld.setText(java.lang.String)");
+		// node.childArrayList.add(node1);
+		// node1 = new xmlResultTreeNode("private static boolean
+		// helloworld.setX(int)");
+		// node.childArrayList.add(node1);
+		// node1 = new xmlResultTreeNode("protected static boolean
+		// helloworld.setValue(double)");
+		// node.childArrayList.add(node1);
+		// head.childArrayList.add(node);
+		//
+		// node = new xmlResultTreeNode("public static int
+		// helloworld.getX(int)");
+		// node1 = new xmlResultTreeNode("public static int helloworld.show()");
+		// node.childArrayList.add(node1);
+		// xmlResultTreeNode node2 = new xmlResultTreeNode("public static int
+		// helloworld.getValue(java.lang.String[])");
+		// node1.childArrayList.add(node2);
+		// xmlResultTreeNode node3 = new xmlResultTreeNode("public static string
+		// helloworld.getText(java.lang.String[])");
+		// node2.childArrayList.add(node3);
+		// head.childArrayList.add(node);
+		//
+		// root.setText("public static string
+		// helloworld.main(java.lang.String[])");
+		// root.setImage(new Image(display, "F://javaworkspace//src//2.bmp"));
 		/*************************** 测试 ********************************/
 		root.setExpanded(true);
 
@@ -203,8 +212,8 @@ public class DrawTree {
 		// 窗口关闭的响应事件 调试
 		shell.addShellListener(new ShellAdapter() {
 			public void shellClosed(ShellEvent arg0) {
-//				 System.out.println("closed");
-//				DrawTree.isGenerated = false;
+				// System.out.println("closed");
+				// DrawTree.isGenerated = false;
 				// arg0.doit = false;
 				// shell.setVisible(false);
 
@@ -245,19 +254,25 @@ public class DrawTree {
 	void traverse(xmlResultTreeNode head, TreeItem item) {
 		item.setText(head.getName());
 		int childNum = head.getNumOfChild();
-//		System.out.println(head.getName());
-//		System.out.println("当前节点有孩子：" + childNum + "个");
+		// System.out.println(head.getName());
+		// System.out.println("当前节点有孩子：" + childNum + "个");
 		if (childNum == 0) {
 			return;
 		}
+		HashSet<String> childSet = new HashSet<String>();
 		for (int i = 0; i < childNum; i++) {
 			xmlResultTreeNode node = head.getChild(i);
-//			System.out.println(i + " =====> " + node.getName());
-			TreeItem subItem = new TreeItem(item, SWT.CHECK);
-			subItem.setExpanded(true);
-			traverse(node, subItem);
+			if (childSet.contains(node.getName())) {
+				continue;
+			} else {
+				// System.out.println(i + " =====> " + node.getName());
+				childSet.add(node.getName());
+				TreeItem subItem = new TreeItem(item, SWT.CHECK);
+				subItem.setExpanded(true);
+				traverse(node, subItem);
+			}
 		}
-//		System.out.println();
+		// System.out.println();
 	}
 
 	class MakeFilt extends SelectionAdapter {
