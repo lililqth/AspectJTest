@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,22 +112,39 @@ public class AnalysisTool {
 			Process pcProcess = Runtime.getRuntime().exec(command, null, new File(filepath));
 			pcProcess.waitFor();
 			System.out.println("插入切点");
-			System.out.println(command);
+//			System.out.println(command);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 		
 		//System.out.println(filename.substring(0, filename.indexOf(".java")));
-
+		
 		command = "cmd.exe /c java -cp bin;C:/aspectj1.7/lib/aspectjrt.jar " 
 				+ Editor.getmainjava().substring(0, Editor.getmainjava().indexOf(".java"));//+ filename.substring(0, filename.indexOf(".java"));
 		try {
-			//int b = Runtime.getRuntime().exec(command, null, new File(filepath)).waitFor();
+			
 			System.out.println("运行");
-			int b = Runtime.getRuntime().exec(command, null, new File(filepath)).waitFor();
-//			int b = Runtime.getRuntime().exec(command, null, new File("S:/Desktop/Home")).waitFor();
-			System.out.println(command);
-			System.out.println("分析结果: "+b);
+			Process pcProcess = Runtime.getRuntime().exec(command, null, new File(filepath));
+			int b = pcProcess.waitFor();
+			/*输出异常流*/
+			FileInputStream errorStream = (FileInputStream)pcProcess.getErrorStream();
+            InputStreamReader isr = new InputStreamReader(errorStream,"gbk");//读取
+//            System.out.println(isr.getEncoding());
+            BufferedReader bufr = new BufferedReader(isr);//缓冲
+            String line = null;
+            while((line =bufr.readLine())!=null) {
+                System.out.println(line);
+            }
+            isr.close();
+
+            
+//			int b = Runtime.getRuntime().exec(command, null, new File(filepath)).waitFor();
+//			System.out.println(command);
+            if (b == 0){
+            	System.out.println("分析成功");
+            }else{
+            	System.out.println("分析失败");
+            }
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}

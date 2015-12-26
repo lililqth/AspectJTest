@@ -29,7 +29,7 @@ public class Run {
 		try {
 			Process pcProcess = Runtime.getRuntime().exec(command, null, new File(filepath));
 			pcProcess.waitFor();
-			System.out.println(command);
+//			System.out.println(command);
 		} catch (IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,7 +50,7 @@ public class Run {
 				System.out.println(line);
 				}
 
-			System.out.println(command);
+//			System.out.println(command);
 			//System.out.println("run: "+b);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();

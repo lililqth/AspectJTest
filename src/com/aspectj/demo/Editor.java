@@ -162,8 +162,8 @@ public class Editor {
 			e1.printStackTrace();
 		}
 		return sb.toString();
-
 	}
+
 
 	/**
 	 * @param f
@@ -278,7 +278,7 @@ public class Editor {
 				packagename += " " + parentpath + "/" + temp.get(i) + "/*.java";
 			}
 
-			System.out.println(parentpath + "  " + temp.size());
+//			System.out.println(parentpath + "  " + temp.size());
 		}
 	}
 
@@ -325,7 +325,7 @@ public class Editor {
 		mntmanalysisItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (javaname != null) {
-					System.out.println(javaname);
+//					System.out.println(javaname);
 					try {
 						AnalysisTool.analysis(javaname);
 					} catch (IOException e1) {
@@ -787,6 +787,7 @@ public class Editor {
 		insertCombo.add("输出函数文件名和行号");
 		insertCombo.add("输出切点类型");
 		insertCombo.add("输出切点类型(详细)");
+		insertCombo.add("输出运行时间");
 		insertCombo.setData("0", "System.out.println(\"hello\");");
 		insertCombo.setData("1", "System.out.println(thisJoinPoint.getSignature().toLongString());");
 		insertCombo.setData("2", "System.out.println(thisJoinPoint.getSourceLocation());");
@@ -805,9 +806,22 @@ public class Editor {
 		insertCombo.setLayoutData(insertComboFormData);
 		insertCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { // 按钮的单击事件
-				String key = "" + insertCombo.getSelectionIndex();
-				insertText.setText("System.out.println(\"***************插入点开始*****************\");\n"
-						+ insertCombo.getData(key) + "\nSystem.out.println(\"***************插入点结束*****************\");");
+				int select = insertCombo.getSelectionIndex();
+				if (select == 5) {
+					insertText.setText("");
+					insertText.setEnabled(false);
+					wayCombo.setEnabled(false);
+					activeCombo.setEnabled(false);
+				} else {
+					insertText.setEnabled(true);
+					wayCombo.setEnabled(true);
+					activeCombo.setEnabled(true);
+					String key = "" + insertCombo.getSelectionIndex();
+					insertText.setText("System.out.println(\"***************插入点开始*****************\");\n"
+							+ insertCombo.getData(key)
+							+ "\nSystem.out.println(\"***************插入点结束*****************\");");
+				}
+
 			}
 		});
 
@@ -914,8 +928,8 @@ public class Editor {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					
 					/* 对XML文件进行结尾 */
-
 					ValueTracker.analysis(parentpath + "/ValueTracker.xml");
 					String nameOfVariate = variateText.getText();
 					variatelog = ValueTracker.getValueList(nameOfVariate);
@@ -961,27 +975,55 @@ public class Editor {
 		submitButton.setLayoutData(submitButtonFormData);
 		submitButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				// 生成aj文件
-				// variateList.add(insertText.getText());
-				String active = activeCombo.getText();
-				String way = wayCombo.getText();
-				String selectname[] = new String[100];
-				String content = insertText.getText();
-
-				selectname = functionList.getSelection();
-				if (selectname.length > 0) {
-					try {
-						addcode.writeaj(parentpath, active, way, selectname, content);
-						setRootDir(new File(parentpath));
-
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				/*输出函数的运行时间*/
+				if (insertCombo.getSelectionIndex() == 5) {
+					String selectname[] = new String[100];
+					selectname = functionList.getSelection();
+					if (selectname.length == 1) {
+						try {
+							addcode.writeaj(parentpath,"5" ,"execution", selectname, "");
+//							content =  "long startTime = System.currentTimeMillis()";
+//							addcode.writeaj(parentpath,"before( Formals )" ,"execution", selectname, content);
+//							content =  "long endTime = System.currentTimeMillis();"+"System.out.println(\""+
+//									selectname[0]+"耗时：\" + (endTime - startTime) + \"ms\");";
+//							addcode.writeaj(parentpath,"after( Formals )" ,"execution", selectname, content);
+							setRootDir(new File(parentpath));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					} else {
+						MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+						messageBox.setMessage("一次只能监控一个函数！");
+						messageBox.open();
 					}
+
+					
+//					addcode.writeaj(parentpath, active, way, selectname, content);
+					setRootDir(new File(parentpath));
 				} else {
-					MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
-					messageBox.setMessage("找不到对应的函数！");
-					messageBox.open();
+					// 生成aj文件
+					// variateList.add(insertText.getText());
+					String active = activeCombo.getText();
+					String way = wayCombo.getText();
+					String selectname[] = new String[100];
+					String content = insertText.getText();
+
+					selectname = functionList.getSelection();
+					if (selectname.length > 0) {
+						try {
+							addcode.writeaj(parentpath, active, way, selectname, content);
+							setRootDir(new File(parentpath));
+
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					} else {
+						MessageBox messageBox = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+						messageBox.setMessage("找不到对应的函数！");
+						messageBox.open();
+					}
 				}
 			}
 		});
@@ -1002,7 +1044,7 @@ public class Editor {
 					messageBox.open();
 				} else {
 					Run.runAnalysis(parentpath, javaname, ".aj");
-					System.out.println(javaname);
+//					System.out.println(javaname);
 					setRootDir(new File(parentpath));
 				}
 			}
@@ -1085,8 +1127,9 @@ public class Editor {
 			MyArgs = args;
 		} else {
 //			initDir = "C:/Closest_Point_Pair/src/Cloest_Point_Pair";
-			initDir ="C:/javaProject/Calculator/src";
-			initDir ="C:/Home";
+			initDir = "C:/javaProject/Calculator/src";
+//			initDir = "C:/Home";
+//			initDir = "C:/javaProject/2048/src";
 		}
 		display = Display.getDefault();
 		font = Display.getDefault().getSystemFont();
@@ -1115,8 +1158,6 @@ public class Editor {
 		createMenu();
 		// 添加代码选项卡
 		createFunctionTab();
-		// addTab(null,
-		// "欢迎使用简易文本编辑器;本编辑器可以对小于1M的txt或html文件进行编辑\n\n该程序旨在演示打开文件对话框、menu、目录对话框、颜色对话框、字体对话框的使用方法\n\nFile菜单下有新建、打开、打开多个文件的功能，以及保存及另存为功能。\nclean为清除当前选项卡的内容，close为关闭当前选项卡，Font为选择字体（忽略颜色），FontColor为选择字体颜色（只对当前选项卡内容及之后打开的有效）");
 		shell.setBounds(Display.getDefault().getPrimaryMonitor().getBounds());
 		shell.open();
 		shell.layout();
@@ -1132,7 +1173,7 @@ public class Editor {
 			packagename += " " + parentpath + "/" + temp.get(i) + "/*.java";
 		}
 
-		System.out.println(parentpath + "  " + temp.size());
+//		System.out.println(parentpath + "  " + temp.size());
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
